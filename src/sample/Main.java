@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;
@@ -13,29 +14,20 @@ import java.sql.ResultSet;
 public class Main extends Application {
     public static DatabaseConnection connect;
     public static Group root;
+    public static String emailId;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        emailId = "";
         connect = new DatabaseConnection();
-        System.out.println(connect.executeQuery("Select * from Product"));
-        ResultSet rs =  connect.executeQuery("Select * from Product");
-        while(rs.next()){
-            System.out.println(rs.getString("productname"));
-//            rs.add(new Product(rs.getInt("pid"), rs.getString("name"), rs.getDouble("price")));
-////                System.out.println(rs.getInt("pid") + " " +
-////                        rs.getString("name") + " " +
-////                        rs.getDouble("price")
-////                );
-        }
-        rs.close();
         root = new Group();
-        root.getChildren().add(FXMLLoader.load(getClass().getResource("header.fxml")));
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
+        header head = new header();
+        productPage products = new productPage();
+        AnchorPane productPane = products.showProducts();
+        root.getChildren().addAll(head.root,productPane);
+        primaryStage.setTitle("SupplyChain");
         primaryStage.setScene(new Scene(root, 800, 800));
         primaryStage.show();
-        productPage products = new productPage();
-        products.showProducts();
         primaryStage.setOnCloseRequest(e ->{
             try {
                 connect.con.close();
